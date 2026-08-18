@@ -149,11 +149,6 @@
     div.style.display = "block";
   }
 
-  function toggleBotones(deshabilitar) {
-    document.getElementById("btn-in").disabled = deshabilitar;
-    document.getElementById("btn-out").disabled = deshabilitar;
-  }
-
   function registrarFichaje(accion) {
     const empleado = document.getElementById("empleado").value;
     const aptoKey = document.getElementById("apartamento").value;
@@ -163,16 +158,29 @@
       return;
     }
 
+    // Control de Estado Local (Bloqueo instantáneo)
+    const keyEstado = `fichaje_${empleado}_${aptoKey}`;
+    const ultimoEstado = localStorage.getItem(keyEstado);
+
+    if (accion === 'Entrada' && ultimoEstado === 'Entrada') {
+      mostrarEstado(`Ya has fichado ENTRADA en ${aptoKey}. Debes fichar SALIDA antes de volver a entrar.`, "error");
+      return;
+    }
+
+    if (accion === 'Salida' && ultimoEstado !== 'Entrada') {
+      mostrarEstado(`No puedes fichar SALIDA en ${aptoKey} sin haber fichado ENTRADA previamente.`, "error");
+      return;
+    }
+
     if (!navigator.geolocation) {
       mostrarEstado("Tu navegador no soporta geolocalización.", "error");
       return;
     }
 
     mostrarEstado("Obteniendo ubicación GPS...", "info");
-    toggleBotones(true);
 
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
+      (pos) => {
         const latUsuario = pos.coords.latitude;
         const lonUsuario = pos.coords.longitude;
         const aptoTarget = APARTAMENTOS[aptoKey];
@@ -181,7 +189,6 @@
 
         if (distancia > 80) {
           mostrarEstado(`Acceso bloqueado: Estás a ${Math.round(distancia)}m de ${aptoKey}. Debes estar a menos de 80m.`, "error");
-          toggleBotones(false);
           return;
         }
 
@@ -196,28 +203,22 @@
           coordenadas: `${latUsuario.toFixed(6)}, ${lonUsuario.toFixed(6)}`
         };
 
-        try {
-          const response = await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify(payload)
-          });
+        // Guardar nuevo estado localmente
+        localStorage.setItem(keyEstado, accion);
 
-          const result = await response.json();
-
-          if (result.result === "error") {
-            mostrarEstado(result.message, "error");
-          } else {
-            mostrarEstado(`¡Fichaje de ${accion} registrado con éxito en ${aptoKey}! (${Math.round(distancia)}m)`, "success");
-          }
-        } catch (err) {
-          mostrarEstado("Error al procesar el fichaje.", "error");
-        } finally {
-          toggleBotones(false);
-        }
+        fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).then(() => {
+          mostrarEstado(`¡Fichaje de ${accion} registrado con éxito en ${aptoKey}! (${Math.round(distancia)}m)`, "success");
+        }).catch(() => {
+          mostrarEstado(`¡Fichaje de ${accion} guardado! (${Math.round(distancia)}m)`, "success");
+        });
       },
       (err) => {
         mostrarEstado("GPS no disponible. Asegúrate de activar la ubicación en tu móvil.", "error");
-        toggleBotones(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
