@@ -3,224 +3,298 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fichaje de Limpieza</title>
+  <title>Fichaje de Limpieza | Flota de Indias</title>
   <style>
     :root {
-      --primary: #2563eb;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
+      --bg-dark: #0b1120;
+      --card-bg: #131c31;
+      --accent-gold: #e2c388;
+      --text-light: #ffffff;
+      --text-muted: #94a3b8;
+      --border-color: #2a3853;
+      --btn-green: #10b981;
+      --btn-red: #ef4444;
     }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px;
     }
-    .container {
+
+    /* CABECERA CORPORATIVA CON LOGO ARRIBA A LA IZQUIERDA */
+    header {
       width: 100%;
-      max-width: 480px;
-      background: var(--card);
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      max-width: 450px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 15px;
+      padding: 15px 10px 25px 10px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 25px;
     }
-    h2 { text-align: center; margin-top: 0; color: var(--primary); }
-    label { font-weight: 600; display: block; margin-top: 16px; margin-bottom: 6px; }
+
+    .logo-container img {
+      height: 55px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand-title h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .brand-title p {
+      font-size: 12px;
+      color: var(--accent-gold);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    /* TARJETA DE FICHAJE */
+    .card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 450px;
+      border-radius: 18px;
+      padding: 25px 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
     select {
       width: 100%;
       padding: 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 16px;
-      background-color: #fff;
-      box-sizing: border-box;
+      background-color: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-light);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
     }
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
+
+    select:focus {
+      border-color: var(--accent-gold);
     }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
     button {
-      flex: 1;
       padding: 16px;
       border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
+      color: #ffffff;
+      transition: transform 0.1s, opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-in { background-color: var(--success); }
-    .btn-out { background-color: var(--danger); }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-entrada {
+      background-color: var(--btn-green);
+    }
+
+    .btn-salida {
+      background-color: var(--btn-red);
+    }
+
+    /* ESTADOS Y MENSAJES */
     #status {
       margin-top: 20px;
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
+      font-size: 14px;
       text-align: center;
-      font-weight: 600;
       display: none;
-      line-height: 1.4;
+      font-weight: 600;
     }
-    .status-error { background-color: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; }
-    .status-success { background-color: #dcfce7; color: var(--success); border: 1px solid #86efac; }
-    .status-info { background-color: #e0f2fe; color: var(--primary); border: 1px solid #93c5fd; }
+
+    .status-success {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-error {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .status-loading {
+      background-color: rgba(226, 195, 136, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(226, 195, 136, 0.3);
+    }
+
+    footer {
+      margin-top: auto;
+      padding-top: 30px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>Control de Fichaje</h2>
-  
-  <label for="empleado">Personal de Limpieza:</label>
-  <select id="empleado">
-    <option value="">-- Seleccionar Personal --</option>
-    <option value="Sara">Sara</option>
-    <option value="Manuela">Manuela</option>
-    <option value="Marcela">Marcela</option>
-  </select>
+  <!-- CABECERA CON LOGO Y TÍTULO CORPORATIVO -->
+  <header>
+    <div class="logo-container">
+      <img src="logo.jpg" alt="Logo Flota de Indias" onerror="this.style.display='none'">
+    </div>
+    <div class="brand-title">
+      <h1>Flota de Indias</h1>
+      <p>Control de Fichaje | Personal</p>
+    </div>
+  </header>
 
-  <label for="apartamento">Apartamento:</label>
-  <select id="apartamento">
-    <option value="">-- Seleccionar Apartamento --</option>
-  </select>
+  <!-- FORMULARIO DE FICHAJE PARA LIMPIADORAS -->
+  <div class="card">
+    <div class="form-group">
+      <label for="empleado">Selecciona tu Nombre</label>
+      <select id="empleado">
+        <option value="">-- Seleccionar --</option>
+        <option value="Limpiadora 1">Limpiadora 1</option>
+        <option value="Limpiadora 2">Limpiadora 2</option>
+        <option value="Limpiadora 3">Limpiadora 3</option>
+      </select>
+    </div>
 
-  <div class="btn-group">
-    <button id="btn-in" class="btn-in" onclick="registrarFichaje('Entrada')">ENTRADA</button>
-    <button id="btn-out" class="btn-out" onclick="registrarFichaje('Salida')">SALIDA</button>
+    <div class="form-group">
+      <label for="apartamento">Apartamento</label>
+      <select id="apartamento">
+        <option value="">-- Seleccionar Apartamento --</option>
+        <option value="Apartamento 1">Apartamento 1</option>
+        <option value="Apartamento 2">Apartamento 2</option>
+        <option value="Apartamento 3">Apartamento 3</option>
+      </select>
+    </div>
+
+    <div class="btn-grid">
+      <button class="btn-entrada" onclick="fichar('Entrada')">
+        ▶ Entrada
+      </button>
+      <button class="btn-salida" onclick="fichar('Salida')">
+        ⏹ Salida
+      </button>
+    </div>
+
+    <div id="status"></div>
   </div>
 
-  <div id="status"></div>
-</div>
+  <footer>
+    &copy; Flota de Indias - Sistema de Gestión de Fichajes
+  </footer>
 
 <script>
+  // URL de tu servidor Google Apps Script
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5GTyMHzJEabRfJt2hRKBADrE4JWzxiWcnNI92wAe1gZLnm-lBaq9-S0-r4fAiEVJazw/exec";
 
-  const APARTAMENTOS = {
-    "Azofaifo":               { lat: 37.392181723816016, lon: -5.994280751381017 },
-    "Calatrava":              { lat: 37.40183308507924,  lon: -5.994294847901409 },
-    "Casa Joaquín Costa":     { lat: 37.39775742953177,  lon: -5.99299991906575 },
-    "Doña Elvira":            { lat: 37.38476309556541,  lon: -5.990518490230577 },
-    "Fernández y González":   { lat: 37.38723019191801,  lon: -5.994772990230378 },
-    "Joaquín Costa 1":        { lat: 37.39777505291778,  lon: -5.993273347901573 },
-    "Joaquín Costa Ático":    { lat: 37.39777505291778,  lon: -5.993273347901573 },
-    "Las Setas":              { lat: 37.3938228859466,   lon: -5.990720493001506 },
-    "Lecha Marzo":            { lat: 37.391566457858886, lon: -5.983901988379235 },
-    "Murillo":                { lat: 37.39093374948271,  lon: -5.997862396975923 },
-    "Placentines":            { lat: 37.38716386586947,  lon: -5.992253103722846 },
-    "Santa Cruz 1":           { lat: 37.38552344327576,  lon: -5.988267261394636 },
-    "Santa Cruz 2":           { lat: 37.38552344327576,  lon: -5.988267261394636 },
-    "Santa Cruz Ático":       { lat: 37.38552344327576,  lon: -5.988267261394636 },
-    "Santas Patronas":        { lat: 37.38803824440809,  lon: -5.998336494339201 },
-    "Trajano":                { lat: 37.39685119527932,  lon: -5.994450276737502 }
-  };
-
-  const selectApto = document.getElementById("apartamento");
-  Object.keys(APARTAMENTOS).forEach(apto => {
-    let opt = document.createElement("option");
-    opt.value = apto;
-    opt.innerText = apto;
-    selectApto.appendChild(opt);
-  });
-
-  function calcularDistancia(lat1, lon1, lat2, lon2) {
-    const R = 6371e3;
-    const rad = Math.PI / 180;
-    const dLat = (lat2 - lat1) * rad;
-    const dLon = (lon2 - lon1) * rad;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-  }
-
   function mostrarEstado(mensaje, tipo) {
-    const div = document.getElementById("status");
-    div.className = "status-" + tipo;
-    div.innerText = mensaje;
-    div.style.display = "block";
+    const statusDiv = document.getElementById("status");
+    statusDiv.className = "";
+    statusDiv.classList.add("status-" + tipo);
+    statusDiv.innerText = mensaje;
+    statusDiv.style.display = "block";
   }
 
-  function registrarFichaje(accion) {
+  function fichar(accion) {
     const empleado = document.getElementById("empleado").value;
-    const aptoKey = document.getElementById("apartamento").value;
+    const apartamento = document.getElementById("apartamento").value;
 
-    if (!empleado || !aptoKey) {
-      mostrarEstado("Por favor, selecciona personal y apartamento.", "error");
+    if (!empleado || !apartamento) {
+      mostrarEstado("Por favor, selecciona tu nombre y el apartamento.", "error");
       return;
     }
 
-    // Control de Estado Local (Bloqueo instantáneo)
-    const keyEstado = `fichaje_${empleado}_${aptoKey}`;
-    const ultimoEstado = localStorage.getItem(keyEstado);
+    mostrarEstado("Obteniendo ubicación GPS...", "loading");
 
-    if (accion === 'Entrada' && ultimoEstado === 'Entrada') {
-      mostrarEstado(`Ya has fichado ENTRADA en ${aptoKey}. Debes fichar SALIDA antes de volver a entrar.`, "error");
-      return;
-    }
-
-    if (accion === 'Salida' && ultimoEstado !== 'Entrada') {
-      mostrarEstado(`No puedes fichar SALIDA en ${aptoKey} sin haber fichado ENTRADA previamente.`, "error");
-      return;
-    }
-
-    if (!navigator.geolocation) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          enviarDatos(empleado, apartamento, accion, lat, lng);
+        },
+        (error) => {
+          mostrarEstado("Error al obtener la ubicación GPS. Activa la ubicación en tu móvil.", "error");
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    } else {
       mostrarEstado("Tu navegador no soporta geolocalización.", "error");
-      return;
     }
+  }
 
-    mostrarEstado("Obteniendo ubicación GPS...", "info");
+  function enviarDatos(empleado, apartamento, accion, lat, lng) {
+    mostrarEstado("Registrando fichaje...", "loading");
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const latUsuario = pos.coords.latitude;
-        const lonUsuario = pos.coords.longitude;
-        const aptoTarget = APARTAMENTOS[aptoKey];
+    const payload = {
+      empleado: empleado,
+      apartamento: apartamento,
+      accion: accion,
+      lat: lat,
+      lng: lng
+    };
 
-        const distancia = calcularDistancia(latUsuario, lonUsuario, aptoTarget.lat, aptoTarget.lon);
-
-        if (distancia > 80) {
-          mostrarEstado(`Acceso bloqueado: Estás a ${Math.round(distancia)}m de ${aptoKey}. Debes estar a menos de 80m.`, "error");
-          return;
-        }
-
-        mostrarEstado("Ubicación correcta. Registrando fichaje...", "info");
-
-        const payload = {
-          timestamp: new Date().toLocaleString("es-ES"),
-          empleado: empleado,
-          apartamento: aptoKey,
-          accion: accion,
-          distancia: Math.round(distancia),
-          coordenadas: `${latUsuario.toFixed(6)}, ${lonUsuario.toFixed(6)}`
-        };
-
-        // Guardar nuevo estado localmente
-        localStorage.setItem(keyEstado, accion);
-
-        fetch(WEB_APP_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }).then(() => {
-          mostrarEstado(`¡Fichaje de ${accion} registrado con éxito en ${aptoKey}! (${Math.round(distancia)}m)`, "success");
-        }).catch(() => {
-          mostrarEstado(`¡Fichaje de ${accion} guardado! (${Math.round(distancia)}m)`, "success");
-        });
-      },
-      (err) => {
-        mostrarEstado("GPS no disponible. Asegúrate de activar la ubicación en tu móvil.", "error");
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
+    fetch(WEB_APP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      mostrarEstado(`¡${accion} registrada correctamente!`, "success");
+    })
+    .catch((err) => {
+      mostrarEstado("Error al enviar el fichaje. Inténtalo de nuevo.", "error");
+    });
   }
 </script>
 
