@@ -36,22 +36,26 @@
 
     header {
       width: 100%;
-      max-width: 450px;
+      max-width: 800px;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 15px;
-      padding: 15px 10px 25px 10px;
+      justify-content: space-between;
+      padding: 15px 10px 20px 10px;
       border-bottom: 1px solid var(--border-color);
       margin-bottom: 25px;
     }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
     .logo-container img {
-      height: 55px;
+      height: 50px;
       width: auto;
       object-fit: contain;
       display: block;
-      background: transparent;
     }
 
     .brand-title h1 {
@@ -69,14 +73,40 @@
       font-weight: 500;
     }
 
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-gold);
+      color: var(--bg-dark);
+      border-color: var(--accent-gold);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
+
     .card {
       background: var(--card-bg);
-      width: 100%;
-      max-width: 450px;
       border-radius: 18px;
       padding: 25px 20px;
       border: 1px solid var(--border-color);
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      margin-bottom: 20px;
     }
 
     .form-group {
@@ -93,7 +123,7 @@
       letter-spacing: 0.5px;
     }
 
-    select {
+    select, input[type="text"], input[type="password"], input[type="date"] {
       width: 100%;
       padding: 14px;
       background-color: #0f172a;
@@ -105,7 +135,7 @@
       transition: border-color 0.2s;
     }
 
-    select:focus {
+    select:focus, input:focus {
       border-color: var(--accent-gold);
     }
 
@@ -116,7 +146,8 @@
       margin-top: 15px;
     }
 
-    button {
+    button.action-btn {
+      width: 100%;
       padding: 16px;
       border: none;
       border-radius: 12px;
@@ -135,19 +166,29 @@
       transform: scale(0.98);
     }
 
-    .btn-entrada {
-      background-color: var(--btn-green);
-    }
-
-    .btn-salida {
-      background-color: var(--btn-red);
-    }
+    .btn-entrada { background-color: var(--btn-green); }
+    .btn-salida { background-color: var(--btn-red); }
+    .btn-gold { background-color: var(--accent-gold); color: var(--bg-dark); }
 
     button:disabled {
       background-color: var(--btn-disabled) !important;
       color: #64748b !important;
       cursor: not-allowed;
       opacity: 0.6;
+    }
+
+    .user-welcome-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .user-welcome-header h3 {
+      font-size: 16px;
+      color: var(--accent-gold);
     }
 
     .active-session {
@@ -190,6 +231,85 @@
       border: 1px solid rgba(226, 195, 136, 0.3);
     }
 
+    /* Estilos Panel de Administración */
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stats-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .stat-card h4 {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .stat-card p {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: #0f172a;
+      color: var(--accent-gold);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-pending {
+      color: var(--accent-gold);
+      font-style: italic;
+    }
+
+    .logout-btn {
+      background: transparent;
+      color: var(--btn-red);
+      border: 1px solid var(--btn-red);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
     footer {
       margin-top: auto;
       padding-top: 30px;
@@ -202,63 +322,161 @@
 <body>
 
   <header>
-    <div class="logo-container">
-      <img src="logo.jpg" alt="Logo Flota de Indias" onerror="this.style.display='none'">
+    <div class="header-left">
+      <div class="logo-container">
+        <img src="logo.jpg" alt="Logo Flota de Indias" onerror="this.style.display='none'">
+      </div>
+      <div class="brand-title">
+        <h1>Flota de Indias</h1>
+        <p>Control de Fichaje</p>
+      </div>
     </div>
-    <div class="brand-title">
-      <h1>Flota de Indias</h1>
-      <p>Control de Fichaje | Personal</p>
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="tab-worker-btn" onclick="switchTab('worker')">Fichador</button>
+      <button class="tab-btn" id="tab-admin-btn" onclick="switchTab('admin')">Admin</button>
     </div>
   </header>
 
-  <div class="card">
-    <div id="active-session-banner" class="active-session">
-      ⏳ Tienes un turno de trabajo en curso.
+  <div class="container">
+    <!-- LOGIN TRABAJADORAS -->
+    <div id="view-worker-login" class="card" style="display: none;">
+      <h3 style="margin-bottom: 20px; color: var(--accent-gold);">Acceso Personal</h3>
+      <div class="form-group">
+        <label for="worker-user">Usuario / Nombre</label>
+        <select id="worker-user">
+          <option value="">-- Seleccionar --</option>
+          <option value="Manuela">Manuela</option>
+          <option value="Sara">Sara</option>
+          <option value="Marcela">Marcela</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="worker-pass">Contraseña</label>
+        <input type="password" id="worker-pass" placeholder="Introduce tu contraseña">
+      </div>
+      <button class="action-btn btn-gold" onclick="loginWorker()">Iniciar Sesión</button>
+      <div id="worker-login-error" style="color: var(--btn-red); margin-top: 10px; font-size: 13px; display: none;">
+        Usuario o contraseña incorrectos.
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="empleado">Selecciona tu Nombre</label>
-      <select id="empleado">
-        <option value="">-- Seleccionar --</option>
-        <option value="Sara">Sara</option>
-        <option value="Manuela">Manuela</option>
-        <option value="Marcela">Marcela</option>
-      </select>
+    <!-- PANEL DE FICHAJE DE TRABAJADORAS -->
+    <div id="view-worker-panel" class="card" style="display: none;">
+      <div class="user-welcome-header">
+        <h3>Hola, <span id="logged-worker-name"></span></h3>
+        <button class="logout-btn" onclick="logoutWorker()">Cerrar Sesión</button>
+      </div>
+
+      <div id="active-session-banner" class="active-session">
+        ⏳ Tienes un turno de trabajo en curso.
+      </div>
+
+      <div class="form-group">
+        <label for="apartamento">Apartamento</label>
+        <select id="apartamento">
+          <option value="">-- Seleccionar Apartamento --</option>
+          <option value="Azofaifo">Azofaifo</option>
+          <option value="Calatrava">Calatrava</option>
+          <option value="Casa Joaquín Costa">Casa Joaquín Costa</option>
+          <option value="Doña Elvira">Doña Elvira</option>
+          <option value="Fernández y González">Fernández y González</option>
+          <option value="Joaquín Costa 1">Joaquín Costa 1</option>
+          <option value="Joaquín Costa Ático">Joaquín Costa Ático</option>
+          <option value="Las Setas">Las Setas</option>
+          <option value="Lecha Marzo">Lecha Marzo</option>
+          <option value="Murillo">Murillo</option>
+          <option value="Placentines">Placentines</option>
+          <option value="Santa Cruz 1">Santa Cruz 1</option>
+          <option value="Santa Cruz 2">Santa Cruz 2</option>
+          <option value="Santa Cruz Ático">Santa Cruz Ático</option>
+          <option value="Santas Patronas">Santas Patronas</option>
+          <option value="Trajano">Trajano</option>
+        </select>
+      </div>
+
+      <div class="btn-grid">
+        <button id="btn-entrada" class="action-btn btn-entrada" onclick="fichar('Entrada')">
+          ▶ Entrada
+        </button>
+        <button id="btn-salida" class="action-btn btn-salida" onclick="fichar('Salida')" disabled>
+          ⏹ Salida
+        </button>
+      </div>
+
+      <div id="status"></div>
     </div>
 
-    <div class="form-group">
-      <label for="apartamento">Apartamento</label>
-      <select id="apartamento">
-        <option value="">-- Seleccionar Apartamento --</option>
-        <option value="Azofaifo" data-lat="37.392181723816016" data-lng="-5.994280751381017">Azofaifo</option>
-        <option value="Calatrava" data-lat="37.40183308507924" data-lng="-5.994294847901409">Calatrava</option>
-        <option value="Casa Joaquín Costa" data-lat="37.39775742953177" data-lng="-5.99299991906575">Casa Joaquín Costa</option>
-        <option value="Doña Elvira" data-lat="37.38476309556541" data-lng="-5.990518490230577">Doña Elvira</option>
-        <option value="Fernández y González" data-lat="37.38723019191801" data-lng="-5.994772990230378">Fernández y González</option>
-        <option value="Joaquín Costa 1" data-lat="37.39777505291778" data-lng="-5.993273347901573">Joaquín Costa 1</option>
-        <option value="Joaquín Costa Ático" data-lat="37.39777505291778" data-lng="-5.993273347901573">Joaquín Costa Ático</option>
-        <option value="Las Setas" data-lat="37.3938228859466" data-lng="-5.990720493001506">Las Setas</option>
-        <option value="Lecha Marzo" data-lat="37.391566457858886" data-lng="-5.983901988379235">Lecha Marzo</option>
-        <option value="Murillo" data-lat="37.39093374948271" data-lng="-5.997862396975923">Murillo</option>
-        <option value="Placentines" data-lat="37.38716386586947" data-lng="-5.992253103722846">Placentines</option>
-        <option value="Santa Cruz 1" data-lat="37.38552344327576" data-lng="-5.988267261394636">Santa Cruz 1</option>
-        <option value="Santa Cruz 2" data-lat="37.38552344327576" data-lng="-5.988267261394636">Santa Cruz 2</option>
-        <option value="Santa Cruz Ático" data-lat="37.38552344327576" data-lng="-5.988267261394636">Santa Cruz Ático</option>
-        <option value="Santas Patronas" data-lat="37.38803824440809" data-lng="-5.998336494339201">Santas Patronas</option>
-        <option value="Trajano" data-lat="37.39685119527932" data-lng="-5.994450276737502">Trajano</option>
-      </select>
+    <!-- VISTA ADMINISTRACIÓN: LOGIN -->
+    <div id="view-admin-login" class="card" style="display: none;">
+      <h3 style="margin-bottom: 20px; color: var(--accent-gold);">Acceso Administrador</h3>
+      <div class="form-group">
+        <label for="admin-pass">Contraseña</label>
+        <input type="password" id="admin-pass" placeholder="Introduce la contraseña">
+      </div>
+      <button class="action-btn btn-gold" onclick="loginAdmin()">Acceder</button>
+      <div id="admin-login-error" style="color: var(--btn-red); margin-top: 10px; font-size: 13px; display: none;">
+        Contraseña incorrecta.
+      </div>
     </div>
 
-    <div class="btn-grid">
-      <button id="btn-entrada" class="btn-entrada" onclick="fichar('Entrada')">
-        ▶ Entrada
-      </button>
-      <button id="btn-salida" class="btn-salida" onclick="fichar('Salida')" disabled>
-        ⏹ Salida
-      </button>
-    </div>
+    <!-- VISTA ADMINISTRACIÓN: PANEL DE CONTROL -->
+    <div id="view-admin-panel" class="card" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: var(--accent-gold);">Registro de Fichajes</h3>
+        <button class="logout-btn" onclick="logoutAdmin()">Cerrar Sesión Admin</button>
+      </div>
 
-    <div id="status"></div>
+      <div class="filter-grid">
+        <div>
+          <label for="filter-worker">Limpiadora</label>
+          <select id="filter-worker" onchange="renderAdminData()">
+            <option value="TODAS">Todas</option>
+            <option value="Sara">Sara</option>
+            <option value="Manuela">Manuela</option>
+            <option value="Marcela">Marcela</option>
+          </select>
+        </div>
+        <div>
+          <label for="filter-date-start">Fecha Desde</label>
+          <input type="date" id="filter-date-start" onchange="renderAdminData()">
+        </div>
+        <div>
+          <label for="filter-date-end">Fecha Hasta</label>
+          <input type="date" id="filter-date-end" onchange="renderAdminData()">
+        </div>
+      </div>
+
+      <div class="stats-summary">
+        <div class="stat-card">
+          <h4>Horas Totales</h4>
+          <p id="total-hours-display">0.00 h</p>
+        </div>
+        <div class="stat-card">
+          <h4>Coste Total (8,33 €/h)</h4>
+          <p id="total-cost-display">0.00 €</p>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Limpiadora</th>
+              <th>Apartamento</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Horas</th>
+              <th>Coste (€)</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body">
+            <tr>
+              <td colspan="6" style="text-align: center; color: var(--text-muted);">Cargando registros...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <footer>
@@ -266,11 +484,91 @@
   </footer>
 
 <script>
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUt1ELaMkTUyFXROZG8N2qrN1VHgzfRLNNwtp_-hf3udp4f0KDulxTCnQ83i3KXURNGQ/exec";
+  // REEMPLAZA ESTA URL CON TU ENLACE DE GOOGLE APPS SCRIPT
+  const WEB_APP_URL = "https://script.google.com/macros/s/TU_SCRIPT_ID/exec";
+  const ADMIN_PASS = "Flotaindias.02";
+  const HOURLY_RATE = 25 / 3; // 8.3333 € / hora
+
+  // Credenciales de las limpiadoras
+  const WORKER_USERS = {
+    "Manuela": "Manuela123",
+    "Sara": "Sara123",
+    "Marcela": "Marcela321"
+  };
+
+  let rawLogs = [];
 
   window.onload = function() {
-    comprobarEstadoSesion();
+    switchTab('worker');
   };
+
+  function switchTab(tab) {
+    document.getElementById("tab-worker-btn").classList.remove("active");
+    document.getElementById("tab-admin-btn").classList.remove("active");
+
+    document.getElementById("view-worker-login").style.display = "none";
+    document.getElementById("view-worker-panel").style.display = "none";
+    document.getElementById("view-admin-login").style.display = "none";
+    document.getElementById("view-admin-panel").style.display = "none";
+
+    if (tab === 'worker') {
+      document.getElementById("tab-worker-btn").classList.add("active");
+      const loggedUser = localStorage.getItem("worker_logged_user");
+      if (loggedUser) {
+        document.getElementById("logged-worker-name").innerText = loggedUser;
+        document.getElementById("view-worker-panel").style.display = "block";
+        comprobarEstadoSesion();
+      } else {
+        document.getElementById("view-worker-login").style.display = "block";
+      }
+    } else {
+      document.getElementById("tab-admin-btn").classList.add("active");
+      if (localStorage.getItem("admin_logged_in") === "true") {
+        document.getElementById("view-admin-panel").style.display = "block";
+        fetchAdminLogs();
+      } else {
+        document.getElementById("view-admin-login").style.display = "block";
+      }
+    }
+  }
+
+  // LOGIN / LOGOUT TRABAJADORAS
+  function loginWorker() {
+    const user = document.getElementById("worker-user").value;
+    const pass = document.getElementById("worker-pass").value;
+
+    if (user && WORKER_USERS[user] && WORKER_USERS[user] === pass) {
+      localStorage.setItem("worker_logged_user", user);
+      document.getElementById("worker-pass").value = "";
+      document.getElementById("worker-login-error").style.display = "none";
+      switchTab('worker');
+    } else {
+      document.getElementById("worker-login-error").style.display = "block";
+    }
+  }
+
+  function logoutWorker() {
+    localStorage.removeItem("worker_logged_user");
+    switchTab('worker');
+  }
+
+  // LOGIN / LOGOUT ADMIN
+  function loginAdmin() {
+    const pass = document.getElementById("admin-pass").value;
+    if (pass === ADMIN_PASS) {
+      localStorage.setItem("admin_logged_in", "true");
+      document.getElementById("admin-pass").value = "";
+      document.getElementById("admin-login-error").style.display = "none";
+      switchTab('admin');
+    } else {
+      document.getElementById("admin-login-error").style.display = "block";
+    }
+  }
+
+  function logoutAdmin() {
+    localStorage.removeItem("admin_logged_in");
+    switchTab('admin');
+  }
 
   function comprobarEstadoSesion() {
     const sesionActiva = localStorage.getItem("fichaje_activo");
@@ -280,16 +578,13 @@
 
     if (sesionActiva) {
       const datos = JSON.parse(sesionActiva);
-      document.getElementById("empleado").value = datos.empleado;
       document.getElementById("apartamento").value = datos.apartamento;
-      document.getElementById("empleado").disabled = true;
       document.getElementById("apartamento").disabled = true;
 
       btnEntrada.disabled = true;
       btnSalida.disabled = false;
       banner.style.display = "block";
     } else {
-      document.getElementById("empleado").disabled = false;
       document.getElementById("apartamento").disabled = false;
       btnEntrada.disabled = false;
       btnSalida.disabled = true;
@@ -306,11 +601,11 @@
   }
 
   function fichar(accion) {
-    const empleado = document.getElementById("empleado").value;
+    const empleado = localStorage.getItem("worker_logged_user");
     const apartamento = document.getElementById("apartamento").value;
 
     if (!empleado || !apartamento) {
-      mostrarEstado("Por favor, selecciona tu nombre y el apartamento.", "error");
+      mostrarEstado("Por favor, selecciona un apartamento.", "error");
       return;
     }
 
@@ -319,29 +614,25 @@
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          enviarDatos(empleado, apartamento, accion, lat, lng);
+          enviarDatos(empleado, apartamento, accion);
         },
         (error) => {
-          mostrarEstado("Error GPS: Activa la ubicación de tu teléfono para fichar.", "error");
+          mostrarEstado("Debes activar el GPS y permitir el acceso para poder fichar.", "error");
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     } else {
-      mostrarEstado("Tu navegador no soporta la geolocalización.", "error");
+      mostrarEstado("Tu dispositivo no soporta geolocalización.", "error");
     }
   }
 
-  function enviarDatos(empleado, apartamento, accion, lat, lng) {
+  function enviarDatos(empleado, apartamento, accion) {
     mostrarEstado("Guardando fichaje...", "loading");
 
     const payload = {
       empleado: empleado,
       apartamento: apartamento,
-      accion: accion,
-      lat: lat,
-      lng: lng
+      accion: accion
     };
 
     fetch(WEB_APP_URL, {
@@ -363,6 +654,130 @@
     .catch((err) => {
       mostrarEstado("Error al guardar el fichaje. Revisa tu conexión.", "error");
     });
+  }
+
+  // LECTURA DE REGISTROS PARA ADMIN
+  function fetchAdminLogs() {
+    fetch(WEB_APP_URL + "?action=getLogs")
+      .then(res => res.json())
+      .then(data => {
+        rawLogs = data;
+        renderAdminData();
+      })
+      .catch(err => {
+        document.getElementById("admin-table-body").innerHTML = 
+          '<tr><td colspan="6" style="text-align:center; color: var(--btn-red);">Error al obtener datos del servidor.</td></tr>';
+      });
+  }
+
+  function renderAdminData() {
+    const selectedWorker = document.getElementById("filter-worker").value;
+    const dateStart = document.getElementById("filter-date-start").value;
+    const dateEnd = document.getElementById("filter-date-end").value;
+
+    let sessions = [];
+    let activeEntries = {};
+
+    let logsSorted = [...rawLogs].sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+    logsSorted.forEach(log => {
+      const key = `${log.empleado}_${log.apartamento}`;
+      const logDate = new Date(log.fecha);
+
+      if (log.accion === "Entrada") {
+        activeEntries[key] = logDate;
+      } else if (log.accion === "Salida") {
+        if (activeEntries[key]) {
+          const entryDate = activeEntries[key];
+          const diffHours = (logDate - entryDate) / (1000 * 60 * 60);
+          sessions.push({
+            empleado: log.empleado,
+            apartamento: log.apartamento,
+            entrada: entryDate,
+            salida: logDate,
+            horas: diffHours,
+            coste: diffHours * HOURLY_RATE
+          });
+          delete activeEntries[key];
+        }
+      }
+    });
+
+    for (let key in activeEntries) {
+      const [emp, apt] = key.split('_');
+      sessions.push({
+        empleado: emp,
+        apartamento: apt,
+        entrada: activeEntries[key],
+        salida: null,
+        horas: 0,
+        coste: 0
+      });
+    }
+
+    sessions.sort((a, b) => new Date(b.entrada) - new Date(a.entrada));
+
+    let filtered = sessions.filter(s => {
+      if (selectedWorker !== "TODAS" && s.empleado !== selectedWorker) return false;
+      
+      const sDateStr = formatDateKey(s.entrada);
+      if (dateStart && sDateStr < dateStart) return false;
+      if (dateEnd && sDateStr > dateEnd) return false;
+
+      return true;
+    });
+
+    let totalHours = 0;
+    let totalCost = 0;
+
+    let tbodyHtml = "";
+
+    if (filtered.length === 0) {
+      tbodyHtml = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">No hay registros con los filtros seleccionados.</td></tr>';
+    } else {
+      filtered.forEach(s => {
+        totalHours += s.horas;
+        totalCost += s.coste;
+
+        const entradaFormatted = formatDateTime(s.entrada);
+        const salidaFormatted = s.salida ? formatDateTime(s.salida) : '<span class="badge-pending">En curso...</span>';
+        const horasFormatted = s.salida ? s.horas.toFixed(2) + " h" : "-";
+        const costeFormatted = s.salida ? s.coste.toFixed(2) + " €" : "-";
+
+        tbodyHtml += `
+          <tr>
+            <td><strong>${s.empleado}</strong></td>
+            <td>${s.apartamento}</td>
+            <td>${entradaFormatted}</td>
+            <td>${salidaFormatted}</td>
+            <td>${horasFormatted}</td>
+            <td>${costeFormatted}</td>
+          </tr>
+        `;
+      });
+    }
+
+    document.getElementById("admin-table-body").innerHTML = tbodyHtml;
+    document.getElementById("total-hours-display").innerText = totalHours.toFixed(2) + " h";
+    document.getElementById("total-cost-display").innerText = totalCost.toFixed(2) + " €";
+  }
+
+  function formatDateTime(dateObj) {
+    const d = new Date(dateObj);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
+
+  function formatDateKey(dateObj) {
+    const d = new Date(dateObj);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${year}-${month}-${day}`;
   }
 </script>
 
