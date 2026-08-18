@@ -33,7 +33,6 @@
       padding: 20px;
     }
 
-    /* CABECERA CORPORATIVA */
     header {
       width: 100%;
       max-width: 900px;
@@ -56,6 +55,7 @@
       width: auto;
       object-fit: contain;
       display: block;
+      background: transparent;
     }
 
     .brand-title h1 {
@@ -91,7 +91,6 @@
       color: #ffffff;
     }
 
-    /* SECCIÓN DE LOGIN CON PIN */
     #login-screen {
       background: var(--card-bg);
       width: 100%;
@@ -148,11 +147,6 @@
       transition: opacity 0.2s;
     }
 
-    .btn-primary:hover {
-      opacity: 0.9;
-    }
-
-    /* PANEL PRINCIPAL */
     #admin-panel {
       display: none;
       width: 100%;
@@ -187,7 +181,6 @@
       color: var(--accent-gold);
     }
 
-    /* TABLA DE FICHAJES */
     .table-container {
       background: var(--card-bg);
       border-radius: 14px;
@@ -219,10 +212,6 @@
       color: var(--text-light);
     }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
-
     #error-msg {
       color: #ef4444;
       font-size: 13px;
@@ -241,7 +230,6 @@
 </head>
 <body>
 
-  <!-- CABECERA CORPORATIVA -->
   <header>
     <div class="header-left">
       <div class="logo-container">
@@ -255,7 +243,6 @@
     <button id="btn-logout" class="btn-logout" onclick="cerrarSesion()">Cerrar Sesión</button>
   </header>
 
-  <!-- PANTALLA DE ACCESO CON PIN -->
   <div id="login-screen">
     <div class="form-group">
       <label for="pin">Clave de Acceso</label>
@@ -265,16 +252,15 @@
     <div id="error-msg">Clave incorrecta. Inténtalo de nuevo.</div>
   </div>
 
-  <!-- PANEL DE ADMINISTRACIÓN -->
   <div id="admin-panel">
     <div class="controls-grid">
       <div class="card">
         <div class="card-title">Filtrar por Trabajadora</div>
-        <select id="filtro-empleado" onchange="calcularTotales()">
+        <select id="filtro-empleado" onchange="filtrarYCalcular()">
           <option value="TODAS">-- Todas las Trabajadoras --</option>
-          <option value="Limpiadora 1">Limpiadora 1</option>
-          <option value="Limpiadora 2">Limpiadora 2</option>
-          <option value="Limpiadora 3">Limpiadora 3</option>
+          <option value="Sara">Sara</option>
+          <option value="Manuela">Manuela</option>
+          <option value="Marcela">Marcela</option>
         </select>
       </div>
 
@@ -297,11 +283,10 @@
             <th>Trabajadora</th>
             <th>Apartamento</th>
             <th>Acción</th>
-            <th>Ubicación</th>
+            <th>Ubicación GPS</th>
           </tr>
         </thead>
         <tbody id="tabla-fichajes">
-          <!-- Datos cargados dinámicamente -->
         </tbody>
       </table>
     </div>
@@ -312,10 +297,8 @@
   </footer>
 
 <script>
-  // NUEVO PIN CONFIGURADO
   const PIN_CORRECTO = "Flotaindias.16";
 
-  // Al cargar la página, comprobar si ya inició sesión anteriormente
   window.onload = function() {
     if (localStorage.getItem("admin_authenticated") === "true") {
       mostrarPanel();
@@ -327,7 +310,6 @@
     const errorMsg = document.getElementById("error-msg");
 
     if (inputPin === PIN_CORRECTO) {
-      // Guardar la sesión en el navegador
       localStorage.setItem("admin_authenticated", "true");
       mostrarPanel();
     } else {
@@ -339,7 +321,7 @@
     document.getElementById("login-screen").style.display = "none";
     document.getElementById("admin-panel").style.display = "block";
     document.getElementById("btn-logout").style.display = "block";
-    cargarDatosSimulados();
+    filtrarYCalcular();
   }
 
   function cerrarSesion() {
@@ -347,16 +329,21 @@
     location.reload();
   }
 
-  const registrosSimulados = [
-    { fecha: "18/08/2026 09:00", empleado: "Limpiadora 1", apartamento: "Apartamento 1", accion: "Entrada", lat: "37.3891", lng: "-5.9845" },
-    { fecha: "18/08/2026 12:00", empleado: "Limpiadora 1", apartamento: "Apartamento 1", accion: "Salida", lat: "37.3891", lng: "-5.9845" }
+  const registros = [
+    { fecha: "18/08/2026 09:00", empleado: "Sara", apartamento: "Azofaifo", accion: "Entrada", lat: "37.392181723816016", lng: "-5.994280751381017" },
+    { fecha: "18/08/2026 12:00", empleado: "Sara", apartamento: "Azofaifo", accion: "Salida", lat: "37.392181723816016", lng: "-5.994280751381017" },
+    { fecha: "18/08/2026 10:00", empleado: "Manuela", apartamento: "Trajano", accion: "Entrada", lat: "37.39685119527932", lng: "-5.994450276737502" },
+    { fecha: "18/08/2026 13:00", empleado: "Manuela", apartamento: "Trajano", accion: "Salida", lat: "37.39685119527932", lng: "-5.994450276737502" }
   ];
 
-  function cargarDatosSimulados() {
+  function filtrarYCalcular() {
+    const filtro = document.getElementById("filtro-empleado").value;
     const tbody = document.getElementById("tabla-fichajes");
     tbody.innerHTML = "";
 
-    registrosSimulados.forEach(reg => {
+    const filtrados = registros.filter(r => filtro === "TODAS" || r.empleado === filtro);
+
+    filtrados.forEach(reg => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${reg.fecha}</td>
@@ -368,16 +355,13 @@
       tbody.appendChild(tr);
     });
 
-    calcularTotales();
-  }
+    const turnosCompletos = Math.floor(filtrados.length / 2);
+    const horasTotales = turnosCompletos * 3;
+    const TASA_HORA = 25 / 3;
+    const sueldoTotal = horasTotales * TASA_HORA;
 
-  function calcularTotales() {
-    const TASA_HORA = 25 / 3; 
-    const horasEstimadas = 3.0; 
-    const sueldoEstimado = horasEstimadas * TASA_HORA;
-
-    document.getElementById("total-horas").innerText = horasEstimadas.toFixed(1) + " hrs";
-    document.getElementById("total-sueldo").innerText = sueldoEstimado.toFixed(2) + " €";
+    document.getElementById("total-horas").innerText = horasTotales.toFixed(1) + " hrs";
+    document.getElementById("total-sueldo").innerText = sueldoTotal.toFixed(2) + " €";
   }
 </script>
 
