@@ -14,6 +14,7 @@
       --border-color: #2a3853;
       --btn-green: #10b981;
       --btn-red: #ef4444;
+      --btn-disabled: #334155;
     }
 
     * {
@@ -33,7 +34,6 @@
       padding: 15px;
     }
 
-    /* CABECERA CORPORATIVA CON LOGO ARRIBA A LA IZQUIERDA */
     header {
       width: 100%;
       max-width: 450px;
@@ -51,6 +51,7 @@
       width: auto;
       object-fit: contain;
       display: block;
+      background: transparent;
     }
 
     .brand-title h1 {
@@ -68,7 +69,6 @@
       font-weight: 500;
     }
 
-    /* TARJETA DE FICHAJE */
     .card {
       background: var(--card-bg);
       width: 100%;
@@ -113,18 +113,18 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 15px;
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
     button {
       padding: 16px;
       border: none;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
       color: #ffffff;
-      transition: transform 0.1s, opacity 0.2s;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -143,7 +143,25 @@
       background-color: var(--btn-red);
     }
 
-    /* ESTADOS Y MENSAJES */
+    button:disabled {
+      background-color: var(--btn-disabled) !important;
+      color: #64748b !important;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .active-session {
+      background: rgba(226, 195, 136, 0.1);
+      border: 1px solid var(--accent-gold);
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--accent-gold);
+      text-align: center;
+      display: none;
+    }
+
     #status {
       margin-top: 20px;
       padding: 12px;
@@ -183,7 +201,6 @@
 </head>
 <body>
 
-  <!-- CABECERA CON LOGO Y TÍTULO CORPORATIVO -->
   <header>
     <div class="logo-container">
       <img src="logo.jpg" alt="Logo Flota de Indias" onerror="this.style.display='none'">
@@ -194,15 +211,18 @@
     </div>
   </header>
 
-  <!-- FORMULARIO DE FICHAJE PARA LIMPIADORAS -->
   <div class="card">
+    <div id="active-session-banner" class="active-session">
+      ⏳ Tienes un turno de trabajo en curso.
+    </div>
+
     <div class="form-group">
       <label for="empleado">Selecciona tu Nombre</label>
       <select id="empleado">
         <option value="">-- Seleccionar --</option>
-        <option value="Limpiadora 1">Limpiadora 1</option>
-        <option value="Limpiadora 2">Limpiadora 2</option>
-        <option value="Limpiadora 3">Limpiadora 3</option>
+        <option value="Sara">Sara</option>
+        <option value="Manuela">Manuela</option>
+        <option value="Marcela">Marcela</option>
       </select>
     </div>
 
@@ -210,17 +230,30 @@
       <label for="apartamento">Apartamento</label>
       <select id="apartamento">
         <option value="">-- Seleccionar Apartamento --</option>
-        <option value="Apartamento 1">Apartamento 1</option>
-        <option value="Apartamento 2">Apartamento 2</option>
-        <option value="Apartamento 3">Apartamento 3</option>
+        <option value="Azofaifo" data-lat="37.392181723816016" data-lng="-5.994280751381017">Azofaifo</option>
+        <option value="Calatrava" data-lat="37.40183308507924" data-lng="-5.994294847901409">Calatrava</option>
+        <option value="Casa Joaquín Costa" data-lat="37.39775742953177" data-lng="-5.99299991906575">Casa Joaquín Costa</option>
+        <option value="Doña Elvira" data-lat="37.38476309556541" data-lng="-5.990518490230577">Doña Elvira</option>
+        <option value="Fernández y González" data-lat="37.38723019191801" data-lng="-5.994772990230378">Fernández y González</option>
+        <option value="Joaquín Costa 1" data-lat="37.39777505291778" data-lng="-5.993273347901573">Joaquín Costa 1</option>
+        <option value="Joaquín Costa Ático" data-lat="37.39777505291778" data-lng="-5.993273347901573">Joaquín Costa Ático</option>
+        <option value="Las Setas" data-lat="37.3938228859466" data-lng="-5.990720493001506">Las Setas</option>
+        <option value="Lecha Marzo" data-lat="37.391566457858886" data-lng="-5.983901988379235">Lecha Marzo</option>
+        <option value="Murillo" data-lat="37.39093374948271" data-lng="-5.997862396975923">Murillo</option>
+        <option value="Placentines" data-lat="37.38716386586947" data-lng="-5.992253103722846">Placentines</option>
+        <option value="Santa Cruz 1" data-lat="37.38552344327576" data-lng="-5.988267261394636">Santa Cruz 1</option>
+        <option value="Santa Cruz 2" data-lat="37.38552344327576" data-lng="-5.988267261394636">Santa Cruz 2</option>
+        <option value="Santa Cruz Ático" data-lat="37.38552344327576" data-lng="-5.988267261394636">Santa Cruz Ático</option>
+        <option value="Santas Patronas" data-lat="37.38803824440809" data-lng="-5.998336494339201">Santas Patronas</option>
+        <option value="Trajano" data-lat="37.39685119527932" data-lng="-5.994450276737502">Trajano</option>
       </select>
     </div>
 
     <div class="btn-grid">
-      <button class="btn-entrada" onclick="fichar('Entrada')">
+      <button id="btn-entrada" class="btn-entrada" onclick="fichar('Entrada')">
         ▶ Entrada
       </button>
-      <button class="btn-salida" onclick="fichar('Salida')">
+      <button id="btn-salida" class="btn-salida" onclick="fichar('Salida')" disabled>
         ⏹ Salida
       </button>
     </div>
@@ -233,8 +266,36 @@
   </footer>
 
 <script>
-  // URL de tu servidor Google Apps Script
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5GTyMHzJEabRfJt2hRKBADrE4JWzxiWcnNI92wAe1gZLnm-lBaq9-S0-r4fAiEVJazw/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwUt1ELaMkTUyFXROZG8N2qrN1VHgzfRLNNwtp_-hf3udp4f0KDulxTCnQ83i3KXURNGQ/exec";
+
+  window.onload = function() {
+    comprobarEstadoSesion();
+  };
+
+  function comprobarEstadoSesion() {
+    const sesionActiva = localStorage.getItem("fichaje_activo");
+    const btnEntrada = document.getElementById("btn-entrada");
+    const btnSalida = document.getElementById("btn-salida");
+    const banner = document.getElementById("active-session-banner");
+
+    if (sesionActiva) {
+      const datos = JSON.parse(sesionActiva);
+      document.getElementById("empleado").value = datos.empleado;
+      document.getElementById("apartamento").value = datos.apartamento;
+      document.getElementById("empleado").disabled = true;
+      document.getElementById("apartamento").disabled = true;
+
+      btnEntrada.disabled = true;
+      btnSalida.disabled = false;
+      banner.style.display = "block";
+    } else {
+      document.getElementById("empleado").disabled = false;
+      document.getElementById("apartamento").disabled = false;
+      btnEntrada.disabled = false;
+      btnSalida.disabled = true;
+      banner.style.display = "none";
+    }
+  }
 
   function mostrarEstado(mensaje, tipo) {
     const statusDiv = document.getElementById("status");
@@ -263,17 +324,17 @@
           enviarDatos(empleado, apartamento, accion, lat, lng);
         },
         (error) => {
-          mostrarEstado("Error al obtener la ubicación GPS. Activa la ubicación en tu móvil.", "error");
+          mostrarEstado("Error GPS: Activa la ubicación de tu teléfono para fichar.", "error");
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     } else {
-      mostrarEstado("Tu navegador no soporta geolocalización.", "error");
+      mostrarEstado("Tu navegador no soporta la geolocalización.", "error");
     }
   }
 
   function enviarDatos(empleado, apartamento, accion, lat, lng) {
-    mostrarEstado("Registrando fichaje...", "loading");
+    mostrarEstado("Guardando fichaje...", "loading");
 
     const payload = {
       empleado: empleado,
@@ -290,10 +351,17 @@
       body: JSON.stringify(payload)
     })
     .then(() => {
-      mostrarEstado(`¡${accion} registrada correctamente!`, "success");
+      if (accion === "Entrada") {
+        localStorage.setItem("fichaje_activo", JSON.stringify({ empleado, apartamento }));
+        mostrarEstado("¡Entrada registrada con éxito!", "success");
+      } else {
+        localStorage.removeItem("fichaje_activo");
+        mostrarEstado("¡Salida registrada con éxito!", "success");
+      }
+      setTimeout(comprobarEstadoSesion, 1500);
     })
     .catch((err) => {
-      mostrarEstado("Error al enviar el fichaje. Inténtalo de nuevo.", "error");
+      mostrarEstado("Error al guardar el fichaje. Revisa tu conexión.", "error");
     });
   }
 </script>
