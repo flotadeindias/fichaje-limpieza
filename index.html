@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fichaje de Limpieza</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; margin-top: 0; color: var(--primary); }
+    label { font-weight: 600; display: block; margin-top: 16px; margin-bottom: 6px; }
+    select {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    button {
+      flex: 1;
+      padding: 16px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-in { background-color: var(--success); }
+    .btn-out { background-color: var(--danger); }
+    #status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+      line-height: 1.4;
+    }
+    .status-error { background-color: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; }
+    .status-success { background-color: #dcfce7; color: var(--success); border: 1px solid #86efac; }
+    .status-info { background-color: #e0f2fe; color: var(--primary); border: 1px solid #93c5fd; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Control de Fichaje</h2>
+  
+  <label for="empleado">Personal de Limpieza:</label>
+  <select id="empleado">
+    <option value="">-- Seleccionar Personal --</option>
+    <option value="Sara">Sara</option>
+    <option value="Manuela">Manuela</option>
+    <option value="Marcela">Marcela</option>
+  </select>
+
+  <label for="apartamento">Apartamento:</label>
+  <select id="apartamento">
+    <option value="">-- Seleccionar Apartamento --</option>
+  </select>
+
+  <div class="btn-group">
+    <button class="btn-in" onclick="registrarFichaje('Entrada')">ENTRADA</button>
+    <button class="btn-out" onclick="registrarFichaje('Salida')">SALIDA</button>
+  </div>
+
+  <div id="status"></div>
+</div>
+
+<script>
+  // URL de tu aplicación web en Google Apps Script
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5GTyMHzJEabRfJt2hRKBADrE4JWzxiWcnNI92wAe1gZLnm-lBaq9-S0-r4fAiEVJazw/exec";
+
+  // Base de datos de tus 16 apartamentos con coordenadas GPS
+  const APARTAMENTOS = {
+    "Azofaifo":               { lat: 37.392181723816016, lon: -5.994280751381017 },
+    "Calatrava":              { lat: 37.40183308507924,  lon: -5.994294847901409 },
+    "Casa Joaquín Costa":     { lat: 37.39775742953177,  lon: -5.99299991906575 },
+    "Doña Elvira":            { lat: 37.38476309556541,  lon: -5.990518490230577 },
+    "Fernández y González":   { lat: 37.38723019191801,  lon: -5.994772990230378 },
+    "Joaquín Costa 1":        { lat: 37.39777505291778,  lon: -5.993273347901573 },
+    "Joaquín Costa Ático":    { lat: 37.39777505291778,  lon: -5.993273347901573 },
+    "Las Setas":              { lat: 37.3938228859466,   lon: -5.990720493001506 },
+    "Lecha Marzo":            { lat: 37.391566457858886, lon: -5.983901988379235 },
+    "Murillo":                { lat: 37.39093374948271,  lon: -5.997862396975923 },
+    "Placentines":            { lat: 37.38716386586947,  lon: -5.992253103722846 },
+    "Santa Cruz 1":           { lat: 37.38552344327576,  lon: -5.988267261394636 },
+    "Santa Cruz 2":           { lat: 37.38552344327576,  lon: -5.988267261394636 },
+    "Santa Cruz Ático":       { lat: 37.38552344327576,  lon: -5.988267261394636 },
+    "Santas Patronas":        { lat: 37.38803824440809,  lon: -5.998336494339201 },
+    "Trajano":                { lat: 37.39685119527932,  lon: -5.994450276737502 }
+  };
+
+  // Cargar lista de apartamentos en el desplegable
+  const selectApto = document.getElementById("apartamento");
+  Object.keys(APARTAMENTOS).forEach(apto => {
+    let opt = document.createElement("option");
+    opt.value = apto;
+    opt.innerText = apto;
+    selectApto.appendChild(opt);
+  });
+
+  // Fórmula de Haversine para cálculo de distancia en metros
+  function calcularDistancia(lat1, lon1, lat2, lon2) {
+    const R = 6371e3; // Radio terrestre en metros
+    const rad = Math.PI / 180;
+    const dLat = (lat2 - lat1) * rad;
+    const dLon = (lon2 - lon1) * rad;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  function mostrarEstado(mensaje, tipo) {
+    const div = document.getElementById("status");
+    div.className = "status-" + tipo;
+    div.innerText = mensaje;
+    div.style.display = "block";
+  }
+
+  function registrarFichaje(accion) {
+    const empleado = document.getElementById("empleado").value;
+    const aptoKey = document.getElementById("apartamento").value;
+
+    if (!empleado || !aptoKey) {
+      mostrarEstado("Por favor, selecciona personal y apartamento.", "error");
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      mostrarEstado("Tu navegador no soporta geolocalización.", "error");
+      return;
+    }
+
+    mostrarEstado("Obteniendo ubicación GPS...", "info");
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const latUsuario = pos.coords.latitude;
+        const lonUsuario = pos.coords.longitude;
+        const aptoTarget = APARTAMENTOS[aptoKey];
+
+        const distancia = calcularDistancia(latUsuario, lonUsuario, aptoTarget.lat, aptoTarget.lon);
+
+        // Control de restricción GPS a 80 metros
+        if (distancia > 80) {
+          mostrarEstado(`Acceso bloqueado: Estás a ${Math.round(distancia)}m de ${aptoKey}. Debes estar a menos de 80m.`, "error");
+          return;
+        }
+
+        mostrarEstado("Ubicación correcta. Registrando fichaje...", "info");
+
+        const payload = {
+          timestamp: new Date().toLocaleString("es-ES"),
+          empleado: empleado,
+          apartamento: aptoKey,
+          accion: accion,
+          distancia: Math.round(distancia),
+          coordenadas: `${latUsuario.toFixed(6)}, ${lonUsuario.toFixed(6)}`
+        };
+
+        try {
+          await fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          mostrarEstado(`¡Fichaje de ${accion} registrado con éxito en ${aptoKey}! (${Math.round(distancia)}m)`, "success");
+        } catch (err) {
+          mostrarEstado("Error al conectar con la base de datos.", "error");
+        }
+      },
+      (err) => {
+        mostrarEstado("GPS no disponible. Asegúrate de activar la ubicación en tu móvil.", "error");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }
+</script>
+
+</body>
+</html>
