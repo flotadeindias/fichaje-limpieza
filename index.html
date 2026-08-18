@@ -93,18 +93,16 @@
   </select>
 
   <div class="btn-group">
-    <button class="btn-in" onclick="registrarFichaje('Entrada')">ENTRADA</button>
-    <button class="btn-out" onclick="registrarFichaje('Salida')">SALIDA</button>
+    <button id="btn-in" class="btn-in" onclick="registrarFichaje('Entrada')">ENTRADA</button>
+    <button id="btn-out" class="btn-out" onclick="registrarFichaje('Salida')">SALIDA</button>
   </div>
 
   <div id="status"></div>
 </div>
 
 <script>
-  // URL de tu aplicación web en Google Apps Script
   const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5GTyMHzJEabRfJt2hRKBADrE4JWzxiWcnNI92wAe1gZLnm-lBaq9-S0-r4fAiEVJazw/exec";
 
-  // Base de datos de tus 16 apartamentos con coordenadas GPS
   const APARTAMENTOS = {
     "Azofaifo":               { lat: 37.392181723816016, lon: -5.994280751381017 },
     "Calatrava":              { lat: 37.40183308507924,  lon: -5.994294847901409 },
@@ -124,7 +122,6 @@
     "Trajano":                { lat: 37.39685119527932,  lon: -5.994450276737502 }
   };
 
-  // Cargar lista de apartamentos en el desplegable
   const selectApto = document.getElementById("apartamento");
   Object.keys(APARTAMENTOS).forEach(apto => {
     let opt = document.createElement("option");
@@ -133,9 +130,8 @@
     selectApto.appendChild(opt);
   });
 
-  // Fórmula de Haversine para cálculo de distancia en metros
   function calcularDistancia(lat1, lon1, lat2, lon2) {
-    const R = 6371e3; // Radio terrestre en metros
+    const R = 6371e3;
     const rad = Math.PI / 180;
     const dLat = (lat2 - lat1) * rad;
     const dLon = (lon2 - lon1) * rad;
@@ -153,6 +149,11 @@
     div.style.display = "block";
   }
 
+  function toggleBotones(deshabilitar) {
+    document.getElementById("btn-in").disabled = deshabilitar;
+    document.getElementById("btn-out").disabled = deshabilitar;
+  }
+
   function registrarFichaje(accion) {
     const empleado = document.getElementById("empleado").value;
     const aptoKey = document.getElementById("apartamento").value;
@@ -168,6 +169,7 @@
     }
 
     mostrarEstado("Obteniendo ubicación GPS...", "info");
+    toggleBotones(true);
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -177,9 +179,9 @@
 
         const distancia = calcularDistancia(latUsuario, lonUsuario, aptoTarget.lat, aptoTarget.lon);
 
-        // Control de restricción GPS a 80 metros
         if (distancia > 80) {
           mostrarEstado(`Acceso bloqueado: Estás a ${Math.round(distancia)}m de ${aptoKey}. Debes estar a menos de 80m.`, "error");
+          toggleBotones(false);
           return;
         }
 
@@ -195,20 +197,27 @@
         };
 
         try {
-          await fetch(WEB_APP_URL, {
+          const response = await fetch(WEB_APP_URL, {
             method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
 
-          mostrarEstado(`¡Fichaje de ${accion} registrado con éxito en ${aptoKey}! (${Math.round(distancia)}m)`, "success");
+          const result = await response.json();
+
+          if (result.result === "error") {
+            mostrarEstado(result.message, "error");
+          } else {
+            mostrarEstado(`¡Fichaje de ${accion} registrado con éxito en ${aptoKey}! (${Math.round(distancia)}m)`, "success");
+          }
         } catch (err) {
-          mostrarEstado("Error al conectar con la base de datos.", "error");
+          mostrarEstado("Error al procesar el fichaje.", "error");
+        } finally {
+          toggleBotones(false);
         }
       },
       (err) => {
         mostrarEstado("GPS no disponible. Asegúrate de activar la ubicación en tu móvil.", "error");
+        toggleBotones(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
